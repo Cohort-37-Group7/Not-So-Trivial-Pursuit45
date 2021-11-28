@@ -1,4 +1,4 @@
-import "./App.css";
+import "./styles.css";
 import GameSetting from "./GameSetting";
 import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
