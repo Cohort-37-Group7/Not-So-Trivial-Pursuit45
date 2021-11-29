@@ -6,14 +6,13 @@ function GameSetting(props) {
   const {
     userName,
     SetUserName,
-    questionsAndAnswers,
-    setQuestionsAndAnswers,
     questionSettingAlready,
     setQuestionSettingAlready,
-    userQuestions,
     setUserQuestions,
     setUserCorrectNumber,
-    setUserAnsweredNumber
+    setUserAnsweredNumber,
+    continueGame,
+    setContinueGame
   } = props;
 
   const [userNameAlready, setUserNameAlready] = useState(false);
@@ -23,17 +22,22 @@ function GameSetting(props) {
   const [userCategoryChoice, setUserCategoryChoice] = useState("placeholder");
   const [userTypeChoice, setUserTypeChoice] = useState("placeholder");
   const [existingUser, setExistingUser] = useState(false);
-  const [continueGame, setContinueGame] = useState(false);
+  const [questionsAndAnswersFromApi, setQuestionsAndAnswersFromApi] = useState(
+    ""
+  );
 
   const userNameUpload = (userName, questionArray) => {
-    const dbRef = firebase.database().ref(userName + `/questions/`);
+    const dbRef = firebase.database().ref(userName);
     dbRef.set({
+      correctNumber: 0,
+      answeredNumber: 0,
       questions: questionArray
     });
   };
 
   const ContinueGameClick = () => {
     setContinueGame(true);
+    setQuestionSettingAlready(true);
   };
 
   const ExistingUserClick = () => {
@@ -41,13 +45,12 @@ function GameSetting(props) {
   };
 
   useEffect(() => {
-    if (questionsAndAnswers !== "") {
-      userNameUpload(userName, questionsAndAnswers);
+    if (questionsAndAnswersFromApi !== "") {
+      userNameUpload(userName, questionsAndAnswersFromApi);
     }
-  }, [userName, questionsAndAnswers]);
+  }, [userName, questionsAndAnswersFromApi]);
 
   // Dropdown
-
   const handleUserDifficultyChoice = (e) => {
     setUserDifficultyChoice(e.target.value);
   };
@@ -91,120 +94,137 @@ function GameSetting(props) {
   };
   //Check existing user name or create a new one
   useEffect(() => {
-    const dbRef = firebase.database().ref();
-    dbRef.on("value", (response) => {
-      const data = response.val();
-      console.log(data);
-      const dataConvertToArray = Object.keys(data);
-      if (String(dataConvertToArray).indexOf(userName) !== -1) {
-        setExistingUser(true);
-        if (continueGame) {
+    if (userNameAlready) {
+      const dbRef = firebase.database().ref();
+      dbRef.on("value", (response) => {
+        const data = response.val();
+        const dataConvertToArray = Object.keys(data);
+        if (String(dataConvertToArray).indexOf(userName) !== -1) {
+          setExistingUser(true);
+          if (continueGame) {
+            // Pass existing data to GameDisplay.js
+            console.log(data);
+            console.log(data[userName]);
+            setUserQuestions(data[userName].questions);
+            setUserCorrectNumber(data[userName].correctNumber);
+            setUserAnsweredNumber(data[userName].answeredNumber);
+          }
         }
-        // setUserPokemonNumber(Object.keys(data[userName]).length);
-        // const userPokemons = Object.values(data[userName]);
-        // setUserPokemonTeam(userPokemons);
-      } else {
-        firebase.database().ref(userName).set("");
-      }
-    });
-  }, [userName]);
+      });
+    }
+  }, [
+    userName,
+    continueGame,
+    userNameAlready,
+    setUserQuestions,
+    setUserCorrectNumber,
+    setUserAnsweredNumber
+  ]);
 
   useEffect(() => {
-    if (questionSettingAlready) {
+    if (questionSettingAlready && !existingUser) {
       const triviaGameUrl = `https://opentdb.com/api.php?amount=11&category=${userCategoryChoice}&difficulty=${userDifficultyChoice}&type=${userTypeChoice}`;
       axios({
         url: triviaGameUrl,
         method: "GET",
         responseType: "json"
       }).then((response) => {
-        if (questionsAndAnswers === "") {
-          setQuestionsAndAnswers(response.data.results);
+        if (questionsAndAnswersFromApi === "") {
+          setQuestionsAndAnswersFromApi(response.data.results);
+        }
+        if (!existingUser) {
+          setUserQuestions(questionsAndAnswersFromApi);
         }
       });
-      console.log(questionsAndAnswers);
+      console.log(questionsAndAnswersFromApi);
       console.log(userTypeChoice);
       console.log(userDifficultyChoice);
       console.log(userCategoryChoice);
     }
   }, [
     questionSettingAlready,
-    questionsAndAnswers,
+    questionsAndAnswersFromApi,
     userTypeChoice,
     userDifficultyChoice,
     userCategoryChoice,
-    setQuestionsAndAnswers
+    setQuestionsAndAnswersFromApi,
+    existingUser,
+    setUserQuestions
   ]);
 
   return (
-    <section>
-      {!userNameAlready ? (
-        <form onSubmit={formSubmission}>
-          <label htmlFor="userNameInput">
-            Please enter your user name here:
-          </label>
-          <input id="userNameInput" type="text" onChange={UserNameInput} />
-          <button onClick={UserNameSubmission}>Submit!</button>
-        </form>
-      ) : null}
-      {userNameAlready && existingUser ? (
-        <div>
-          <button onClick={ContinueGameClick}>Continue your game?</button>
-          <button onClick={ExistingUserClick}>Start a new game!</button>
-        </div>
-      ) : null}
-      {questionSettingAlready ? null : !existingUser ? (
-        <form onSubmit={formSubmission}>
-          {/* Category selection */}
-          <select
-            id="categorySelection"
-            name="categorySelection"
-            value={userCategoryChoice}
-            onChange={handleUserCategoryChoice}
-          >
-            <option value="placeholder" disabled>
-              Choose your category:
-            </option>
-            <option value="21">Sport</option>
-            <option value="9">General Knowledge</option>
-            <option value="17">Science&Nature</option>
-            <option value="12">Music</option>
-            <option value="14">Television</option>
-            <option value="15">Video Games</option>
-            <option value="23">History</option>
-          </select>
-          {/* Type selection */}
-          <select
-            id="typeSelection"
-            name="typeSelection"
-            value={userTypeChoice}
-            onChange={handleUserTypeChoice}
-          >
-            <option value="placeholder" disabled>
-              Choose your type:
-            </option>
-            <option value="multiple">Multiple Choice</option>
-            <option value="boolean">True/False</option>
-          </select>
-          {/* Difficulty selection */}
-          <select
-            id="difficulty"
-            name="difficulty"
-            value={userDifficultyChoice}
-            onChange={handleUserDifficultyChoice}
-          >
-            <option value="placeholder" disabled>
-              Select difficulty:
-            </option>
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
-          </select>
-          <button onClick={QuestionSettingSubmission}>
-            Questions Generating!
-          </button>
-        </form>
-      ) : null}
-    </section>
+    <>
+      <section>
+        {!userNameAlready ? (
+          <form onSubmit={formSubmission}>
+            <label htmlFor="userNameInput">
+              Please enter your user name here:
+            </label>
+            <input id="userNameInput" type="text" onChange={UserNameInput} />
+            <button onClick={UserNameSubmission}>Submit!</button>
+          </form>
+        ) : null}
+        {questionsAndAnswersFromApi ? null : questionSettingAlready ? null : userNameAlready &&
+          existingUser ? (
+          <div>
+            <button onClick={ContinueGameClick}>Continue your game?</button>
+            <button onClick={ExistingUserClick}>Start a new game!</button>
+          </div>
+        ) : null}
+        {questionSettingAlready ? null : !existingUser && userNameAlready ? (
+          <form onSubmit={formSubmission}>
+            {/* Category selection */}
+            <select
+              id="categorySelection"
+              name="categorySelection"
+              value={userCategoryChoice}
+              onChange={handleUserCategoryChoice}
+            >
+              <option value="placeholder" disabled>
+                Choose your category:
+              </option>
+              <option value="21">Sport</option>
+              <option value="9">General Knowledge</option>
+              <option value="17">Science&Nature</option>
+              <option value="12">Music</option>
+              <option value="14">Television</option>
+              <option value="15">Video Games</option>
+              <option value="23">History</option>
+            </select>
+            {/* Type selection */}
+            <select
+              id="typeSelection"
+              name="typeSelection"
+              value={userTypeChoice}
+              onChange={handleUserTypeChoice}
+            >
+              <option value="placeholder" disabled>
+                Choose your type:
+              </option>
+              <option value="multiple">Multiple Choice</option>
+              <option value="boolean">True/False</option>
+            </select>
+            {/* Difficulty selection */}
+            <select
+              id="difficulty"
+              name="difficulty"
+              value={userDifficultyChoice}
+              onChange={handleUserDifficultyChoice}
+            >
+              <option value="placeholder" disabled>
+                Select difficulty:
+              </option>
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+            <button onClick={QuestionSettingSubmission}>
+              Questions Generating!
+            </button>
+          </form>
+        ) : null}
+      </section>
+    </>
   );
 }
 

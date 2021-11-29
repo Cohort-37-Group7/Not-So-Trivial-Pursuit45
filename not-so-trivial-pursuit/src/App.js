@@ -7,12 +7,12 @@ import GameDisplay from "./GameDisplay";
 function App() {
   const [gameStart, setGameStart] = useState(false);
   const [userName, SetUserName] = useState(""); //Pass to GameSetting
-  const [questionsAndAnswers, setQuestionsAndAnswers] = useState(""); //Pass to GameSetting
   const [questionSettingAlready, setQuestionSettingAlready] = useState(false); //Pass to GameSetting
   const [gameDisplayStart, setGameDisplayStart] = useState(false);
   const [userQuestions, setUserQuestions] = useState(""); // To store the users questions from Firebase (pass to GameSetting)
   const [userCorrectNumber, setUserCorrectNumber] = useState(""); // To store the users correct number from Firebase (pass to GameSetting)
   const [userAnsweredNumber, setUserAnsweredNumber] = useState(""); // To store the users answered questions number from Firebase (pass to GameSetting)
+  const [continueGame, setContinueGame] = useState(false); //Pass to GameSetting
 
   const GameStartClick = () => {
     setGameStart(true);
@@ -43,18 +43,28 @@ function App() {
             <GameSetting
               userName={userName}
               SetUserName={SetUserName}
-              questionsAndAnswers={questionsAndAnswers}
-              setQuestionsAndAnswers={setQuestionsAndAnswers}
               questionSettingAlready={questionSettingAlready}
               setQuestionSettingAlready={setQuestionSettingAlready}
               userQuestions={userQuestions}
               setUserQuestions={setUserQuestions}
               setUserCorrectNumber={setUserCorrectNumber}
               setUserAnsweredNumber={setUserAnsweredNumber}
+              continueGame={continueGame}
+              setContinueGame={setContinueGame}
             />
           }
         />
-        <Route path="/gamedisplay/*" element={<GameDisplay />} />
+        <Route
+          path="/gamedisplay/*"
+          element={
+            <GameDisplay
+              userQuestions={userQuestions}
+              userName={userName}
+              userCorrectNumber={userCorrectNumber}
+              userAnsweredNumber={userAnsweredNumber}
+            />
+          }
+        />
       </Routes>
     </Router>
   );
