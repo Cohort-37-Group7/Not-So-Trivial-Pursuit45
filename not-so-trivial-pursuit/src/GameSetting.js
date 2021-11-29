@@ -1,26 +1,61 @@
-import GameDisplay from "./GameDisplay";
 import { useState, useEffect } from "react";
 import firebase from "./firebase";
-import { Routes, Route, Link } from "react-router-dom";
 import axios from "axios";
 
-function GameSetting() {
-  const [userName, SetUserName] = useState("");
-  const [userNameAlready, setUserNameAlready] = useState(false);
-  const [questionSettingAlready, setQuestionSettingAlready] = useState(false);
+function GameSetting(props) {
+  const {
+    userName,
+    SetUserName,
+    questionsAndAnswers,
+    setQuestionsAndAnswers,
+    questionSettingAlready,
+    setQuestionSettingAlready,
+    userQuestions,
+    setUserQuestions,
+    setUserCorrectNumber,
+    setUserAnsweredNumber
+  } = props;
 
-  // Dropdown
+  const [userNameAlready, setUserNameAlready] = useState(false);
   const [userDifficultyChoice, setUserDifficultyChoice] = useState(
     "placeholder"
   );
+  const [userCategoryChoice, setUserCategoryChoice] = useState("placeholder");
+  const [userTypeChoice, setUserTypeChoice] = useState("placeholder");
+  const [existingUser, setExistingUser] = useState(false);
+  const [continueGame, setContinueGame] = useState(false);
+
+  const userNameUpload = (userName, questionArray) => {
+    const dbRef = firebase.database().ref(userName + `/questions/`);
+    dbRef.set({
+      questions: questionArray
+    });
+  };
+
+  const ContinueGameClick = () => {
+    setContinueGame(true);
+  };
+
+  const ExistingUserClick = () => {
+    setExistingUser(false);
+  };
+
+  useEffect(() => {
+    if (questionsAndAnswers !== "") {
+      userNameUpload(userName, questionsAndAnswers);
+    }
+  }, [userName, questionsAndAnswers]);
+
+  // Dropdown
+
   const handleUserDifficultyChoice = (e) => {
     setUserDifficultyChoice(e.target.value);
   };
-  const [userCategoryChoice, setUserCategoryChoice] = useState("placeholder");
+
   const handleUserCategoryChoice = (e) => {
     setUserCategoryChoice(e.target.value);
   };
-  const [userTypeChoice, setUserTypeChoice] = useState("placeholder");
+
   const handleUserTypeChoice = (e) => {
     setUserTypeChoice(e.target.value);
   };
@@ -54,26 +89,50 @@ function GameSetting() {
       setQuestionSettingAlready(true);
     }
   };
+  //Check existing user name or create a new one
+  useEffect(() => {
+    const dbRef = firebase.database().ref();
+    dbRef.on("value", (response) => {
+      const data = response.val();
+      console.log(data);
+      const dataConvertToArray = Object.keys(data);
+      if (String(dataConvertToArray).indexOf(userName) !== -1) {
+        setExistingUser(true);
+        if (continueGame) {
+        }
+        // setUserPokemonNumber(Object.keys(data[userName]).length);
+        // const userPokemons = Object.values(data[userName]);
+        // setUserPokemonTeam(userPokemons);
+      } else {
+        firebase.database().ref(userName).set("");
+      }
+    });
+  }, [userName]);
 
   useEffect(() => {
     if (questionSettingAlready) {
       const triviaGameUrl = `https://opentdb.com/api.php?amount=11&category=${userCategoryChoice}&difficulty=${userDifficultyChoice}&type=${userTypeChoice}`;
       axios({
         url: triviaGameUrl,
-        method: 'GET',
-        responseType: 'json'
+        method: "GET",
+        responseType: "json"
       }).then((response) => {
-        console.log(response.data);
+        if (questionsAndAnswers === "") {
+          setQuestionsAndAnswers(response.data.results);
+        }
       });
+      console.log(questionsAndAnswers);
       console.log(userTypeChoice);
       console.log(userDifficultyChoice);
       console.log(userCategoryChoice);
     }
   }, [
     questionSettingAlready,
-    userCategoryChoice,
+    questionsAndAnswers,
     userTypeChoice,
-    userDifficultyChoice
+    userDifficultyChoice,
+    userCategoryChoice,
+    setQuestionsAndAnswers
   ]);
 
   return (
@@ -87,7 +146,13 @@ function GameSetting() {
           <button onClick={UserNameSubmission}>Submit!</button>
         </form>
       ) : null}
-      {questionSettingAlready ? null : userNameAlready ? (
+      {userNameAlready && existingUser ? (
+        <div>
+          <button onClick={ContinueGameClick}>Continue your game?</button>
+          <button onClick={ExistingUserClick}>Start a new game!</button>
+        </div>
+      ) : null}
+      {questionSettingAlready ? null : !existingUser ? (
         <form onSubmit={formSubmission}>
           {/* Category selection */}
           <select
@@ -139,14 +204,6 @@ function GameSetting() {
           </button>
         </form>
       ) : null}
-      {questionSettingAlready ? (
-        <Link to="/gamedisplay/">
-          <button>Trivia Game Start!</button>
-        </Link>
-      ) : null}
-      <Routes>
-        <Route path="/gamedisplay/" element={<GameDisplay />} />
-      </Routes>
     </section>
   );
 }
