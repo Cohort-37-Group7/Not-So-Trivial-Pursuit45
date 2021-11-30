@@ -1,3 +1,5 @@
+import "./styles.scss";
+ 
 function QuestionDisplay() {
     return <h1>QuestionDisplay</h1>;
   }

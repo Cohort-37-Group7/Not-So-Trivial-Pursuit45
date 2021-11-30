@@ -1,3 +1,4 @@
+import "./styles.scss";
 import QuestionDisplay from "./QuestionDisplay";
 import { useState, useEffect } from "react";
 import firebase from "./firebase";

@@ -1,3 +1,5 @@
+import "./styles.scss";
+
 function GameResult() {
   return <h1>GameResultPage</h1>;
 }

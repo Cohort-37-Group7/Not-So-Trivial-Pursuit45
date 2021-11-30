@@ -1,3 +1,4 @@
+import "./styles.scss";
 import { useState, useEffect } from "react";
 import firebase from "./firebase";
 import axios from "axios";
