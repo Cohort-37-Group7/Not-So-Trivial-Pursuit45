@@ -8,17 +8,27 @@ function GameDisplay(props) {
     userName,
     userQuestions,
     userCorrectNumber,
-    userAnsweredNumber
+    userAnsweredNumber,
+    continueGame,
+    currentQuestionOrder,
+    setCurrentQuestionOrder,
+    answeredCorrect,
+    setAnswerCorrect
   } = props;
   const [currentQuestion, SetCurrentQuestion] = useState("");
-  const [currentQuestionOrder, setCurrentQuestionOrder] = useState(0);
-  const [answeredCorrect, setAnswerCorrect] = useState(0);
+
+  useEffect(() => {
+    if (continueGame) {
+      if (userAnsweredNumber !== 0) {
+        setAnswerCorrect(userCorrectNumber);
+        setCurrentQuestionOrder(userAnsweredNumber);
+      }
+    }
+  }, [continueGame, userCorrectNumber, userAnsweredNumber, setAnswerCorrect, setCurrentQuestionOrder]);
 
   useEffect(() => {
     SetCurrentQuestion(userQuestions[currentQuestionOrder]);
     console.log(currentQuestion);
-    console.log("userCorrectNumber" + userCorrectNumber);
-    console.log("userAnsweredNumber" + userAnsweredNumber);
   }, [
     userQuestions,
     currentQuestion,
@@ -36,6 +46,7 @@ function GameDisplay(props) {
   }, [userName, userQuestions, answeredCorrect, currentQuestionOrder]);
 
   return (
+    <div className="gameDisplay">
     <>
       <h1>DisplayPage</h1>
       {
@@ -48,6 +59,7 @@ function GameDisplay(props) {
         />
       }
     </>
+    </div>
   );
 }
 

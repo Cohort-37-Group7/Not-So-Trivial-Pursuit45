@@ -22,6 +22,7 @@ function GameSetting(props) {
   );
   const [userCategoryChoice, setUserCategoryChoice] = useState("placeholder");
   const [userTypeChoice, setUserTypeChoice] = useState("placeholder");
+  const [userNumberChoice, setUserNumberChoice] = useState("placeholder");
   const [existingUser, setExistingUser] = useState(false);
   const [questionsAndAnswersFromApi, setQuestionsAndAnswersFromApi] = useState(
     ""
@@ -58,6 +59,10 @@ function GameSetting(props) {
 
   const handleUserCategoryChoice = (e) => {
     setUserCategoryChoice(e.target.value);
+  };
+
+  const handleUserNumberChoice = (e) => {
+    setUserNumberChoice(e.target.value);
   };
 
   const handleUserTypeChoice = (e) => {
@@ -124,7 +129,7 @@ function GameSetting(props) {
 
   useEffect(() => {
     if (questionSettingAlready && !existingUser) {
-      const triviaGameUrl = `https://opentdb.com/api.php?amount=11&category=${userCategoryChoice}&difficulty=${userDifficultyChoice}&type=${userTypeChoice}`;
+      const triviaGameUrl = `https://opentdb.com/api.php?amount=${userNumberChoice}&category=${userCategoryChoice}&difficulty=${userDifficultyChoice}&type=${userTypeChoice}`;
       axios({
         url: triviaGameUrl,
         method: "GET",
@@ -143,6 +148,7 @@ function GameSetting(props) {
       console.log(userCategoryChoice);
     }
   }, [
+    userNumberChoice,
     questionSettingAlready,
     questionsAndAnswersFromApi,
     userTypeChoice,
@@ -174,6 +180,23 @@ function GameSetting(props) {
         ) : null}
         {questionSettingAlready ? null : !existingUser && userNameAlready ? (
           <form onSubmit={formSubmission}>
+            {/* # of questions selected */}
+            <select
+              id="amountOfQuestionsSelection"
+              name="amountOfQuestionsSelection"
+              value={userNumberChoice}
+              onChange={handleUserNumberChoice}
+            >
+              <option value="placeholder" disabled>
+                Choose your number of questions:
+              </option>
+              <option value="1">1</option>
+              <option value="3">3</option>
+              <option value="5">5</option>
+              <option value="7">7</option>
+              <option value="9">9</option>
+              <option value="11">11</option>
+            </select>
             {/* Category selection */}
             <select
               id="categorySelection"
