@@ -19,7 +19,6 @@ function QuestionDisplay(props) {
     const rightAnswer = currentQuestion.correct_answer;
     const wrongAnswers = currentQuestion.incorrect_answers;
     console.log(rightAnswer);
-    console.log(wrongAnswers);
     if (wrongAnswers !== undefined) {
       const answers = [...wrongAnswers, rightAnswer];
 
@@ -30,13 +29,13 @@ function QuestionDisplay(props) {
   }, [currentQuestion]);
 
   const booleanTrueClick = () => {
-    if (currentQuestion.correct_answer === 'True') {
+    if (currentQuestion.correct_answer === "True") {
       setAnswerCorrect(answeredCorrect + 1);
     }
   };
 
   const booleanFalseClick = () => {
-    if (currentQuestion.correct_answer === 'False') {
+    if (currentQuestion.correct_answer === "False") {
       setAnswerCorrect(answeredCorrect + 1);
     }
   };
@@ -47,11 +46,9 @@ function QuestionDisplay(props) {
     }
   };
 
+  // set to stop at question 11
   const ClickAnAnswerAndGoToNextQuestion = () => {
-    // Delay before moving onto the next question
-    // setTimeout(() => {
     setCurrentQuestionOrder(currentQuestionOrder + 1);
-    // }, 2500);
   };
 
   return (
@@ -63,21 +60,40 @@ function QuestionDisplay(props) {
             dangerouslySetInnerHTML={{ __html: currentQuestion.question }}
           ></div>
           {randomAnswers.map((answer, index) => (
-            <button value={answer} key={index} onClick={multipleClick}>
+            <button
+              value={answer}
+              key={index}
+              onClick={(e) => {
+                multipleClick(e);
+                ClickAnAnswerAndGoToNextQuestion();
+              }}
+            >
               {answer}
             </button>
           ))}
-          <button onClick={ClickAnAnswerAndGoToNextQuestion}>Next</button>
         </div>
       ) : null}
       {currentQuestion.type === "boolean" ? (
         <div>
           <p>{currentQuestion.question}</p>
           <div>
-            <button onClick={booleanTrueClick}>True</button>
-            <button onClick={booleanFalseClick}>False</button>
+            <button
+              onClick={() => {
+                booleanTrueClick();
+                ClickAnAnswerAndGoToNextQuestion();
+              }}
+            >
+              True
+            </button>
+            <button
+              onClick={() => {
+                booleanFalseClick();
+                ClickAnAnswerAndGoToNextQuestion();
+              }}
+            >
+              False
+            </button>
           </div>
-          <button onClick={ClickAnAnswerAndGoToNextQuestion}>Next</button>
         </div>
       ) : null}
     </>

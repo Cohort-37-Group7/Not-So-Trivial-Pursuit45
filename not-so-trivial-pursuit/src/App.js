@@ -1,9 +1,9 @@
 import "./styles.scss";
 import GameSetting from "./GameSetting";
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import GameDisplay from "./GameDisplay";
-import GameResult from './GameResult';
+import GameResult from "./GameResult";
 
 function App() {
   const [gameStart, setGameStart] = useState(false);
@@ -16,6 +16,18 @@ function App() {
   const [continueGame, setContinueGame] = useState(false); //Pass to GameSetting
   const [currentQuestionOrder, setCurrentQuestionOrder] = useState(0);
   const [answeredCorrect, setAnswerCorrect] = useState(0);
+  const [userNumberChoice, setUserNumberChoice] = useState("placeholder"); //Pass to GameSetting and GameDisplay
+  const [openGameResultWindow, setOpenGameResultWindow] = useState(false);
+  const [gameResultShows, setGameResultShows] = useState();
+
+  useEffect(() => {
+      const numberUserNumberChoice = parseInt(userNumberChoice, 10)
+      if (currentQuestionOrder === numberUserNumberChoice) {
+        setOpenGameResultWindow(true);
+    }
+    console.log("userAnsweredNumber" + currentQuestionOrder);
+    console.log("userNumberChoice" + userNumberChoice);
+  }, [currentQuestionOrder, userNumberChoice, setOpenGameResultWindow]);
 
   const GameStartClick = () => {
     setGameStart(true);
@@ -24,16 +36,28 @@ function App() {
   const GameDisplayStartClick = () => {
     setGameDisplayStart(true);
   };
+
+  const HomePageClick = () => {
+    setGameResultShows(0);
+    setAnswerCorrect(0);
+    setCurrentQuestionOrder(0);
+    setGameStart(false);
+    setQuestionSettingAlready(false);
+    setGameDisplayStart(false);
+    setOpenGameResultWindow(false);
+  };
+
+  const GameResultClick = () => {
+    setOpenGameResultWindow(!openGameResultWindow);
+  };
   return (
     <Router>
       <section className="App">
         <nav>
-          <Link  to ="/">
-            <button>Home</button>
+          <Link to="/">
+            <button onClick={HomePageClick}>Home</button>
           </Link>
-          <Link to="/gameresult/*">
-            <button>Game Result</button>
-          </Link>
+          <button onClick={GameResultClick}>Game Result</button>
         </nav>
         {!gameStart ? (
           <Link to="/gamesetting/*">
@@ -46,6 +70,16 @@ function App() {
           </Link>
         ) : null}
       </section>
+
+      {openGameResultWindow ? (
+        <GameResult
+          currentQuestionOrder={currentQuestionOrder}
+          answeredCorrect={answeredCorrect}
+          userName={userName}
+          gameResultShows={gameResultShows}
+          setGameResultShows={setGameResultShows}
+        />
+      ) : null}
 
       <Routes>
         <Route
@@ -62,6 +96,8 @@ function App() {
               setUserAnsweredNumber={setUserAnsweredNumber}
               continueGame={continueGame}
               setContinueGame={setContinueGame}
+              userNumberChoice={userNumberChoice}
+              setUserNumberChoice={setUserNumberChoice}
             />
           }
         />
@@ -78,17 +114,17 @@ function App() {
               setCurrentQuestionOrder={setCurrentQuestionOrder}
               answeredCorrect={answeredCorrect}
               setAnswerCorrect={setAnswerCorrect}
+              userNumberChoice={userNumberChoice}
+              setUserNumberChoice={setUserNumberChoice}
+              setOpenGameResultWindow={setOpenGameResultWindow}
+              openGameResultWindow={openGameResultWindow}
             />
           }
         />
-        <Route path="/gameresult/*" element={
-        <GameResult 
-        currentQuestionOrder={currentQuestionOrder}/>} 
-        answeredCorrect={answeredCorrect}/>
-
       </Routes>
     </Router>
   );
 }
 
 export default App;
+
