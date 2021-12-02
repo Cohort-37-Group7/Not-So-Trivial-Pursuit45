@@ -1,0 +1,44 @@
+.animationContainer{
+  position:relative;
+
+  .darthMaul {
+    height: 100px;
+    position: absolute;
+    bottom: 15%;
+    left: 10%;
+  }
+  
+  .lukeSkywalker {
+    height: 138px;
+    position: absolute;
+    bottom: 0%;
+    right:10%;
+  }
+}
+
+.questionContainer{
+  display:grid;
+
+  .questionText {
+    font-family: 'Press Start 2P', serif;
+    font-size: 1.5rem;
+    text-align: center;
+    line-height: 1.5;
+
+  }
+  
+  .buttonAnswer {
+    border-radius: 10px;
+    text-transform: uppercase;
+    margin: 10px;
+    padding: 5px;
+    color: black;
+    background-color: rgba(247, 245, 223, 0.384);
+  
+    &:hover {
+      color: forestgreen;
+      cursor: pointer;
+      z-index: 1;
+    }
+  }
+}

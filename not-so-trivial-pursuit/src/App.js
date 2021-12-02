@@ -1,9 +1,10 @@
 import "./styles.scss";
 import GameSetting from "./GameSetting";
-import { useState ,useEffect} from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import GameDisplay from "./GameDisplay";
 import GameResult from "./GameResult";
+import LogoImage from "./images/logo.png";
 
 function App() {
   const [gameStart, setGameStart] = useState(false);
@@ -18,12 +19,12 @@ function App() {
   const [answeredCorrect, setAnswerCorrect] = useState(0);
   const [userNumberChoice, setUserNumberChoice] = useState("placeholder"); //Pass to GameSetting and GameDisplay
   const [openGameResultWindow, setOpenGameResultWindow] = useState(false);
-  const [gameResultShows, setGameResultShows] = useState();
+  const [gameResultShows, setGameResultShows] = useState(0);
 
   useEffect(() => {
-      const numberUserNumberChoice = parseInt(userNumberChoice, 10)
-      if (currentQuestionOrder === numberUserNumberChoice) {
-        setOpenGameResultWindow(true);
+    const numberUserNumberChoice = parseInt(userNumberChoice, 10);
+    if (currentQuestionOrder === numberUserNumberChoice) {
+      setOpenGameResultWindow(true);
     }
     console.log("userAnsweredNumber" + currentQuestionOrder);
     console.log("userNumberChoice" + userNumberChoice);
@@ -54,19 +55,39 @@ function App() {
     <Router>
       <section className="App">
         <nav>
-          <Link to="/">
-            <button onClick={HomePageClick}>Home</button>
-          </Link>
-          <button onClick={GameResultClick}>Game Result</button>
+          <div>
+            <Link to="/">
+              <button className="homePageButton" onClick={HomePageClick}>
+                Home
+              </button>
+            </Link>
+            <button className="resultPageButton" onClick={GameResultClick}>
+              Result
+            </button>
+          </div>
         </nav>
+
+        <img
+          className={gameStart ? "logoImage logoHide" : "logoImage"}
+          src={LogoImage}
+          alt="Website logo"
+        />
+
         {!gameStart ? (
           <Link to="/gamesetting/*">
-            <button onClick={GameStartClick}>Let's Start The Game!</button>
+            <button className="gameStartButton" onClick={GameStartClick}>
+              Let's Start The Game!
+            </button>
           </Link>
         ) : null}
         {gameDisplayStart ? null : questionSettingAlready ? (
           <Link to="/gamedisplay/*">
-            <button onClick={GameDisplayStartClick}>Trivia Game Start!</button>
+            <button
+              className="triviaGameStartbutton"
+              onClick={GameDisplayStartClick}
+            >
+              Trivia Game Start!
+            </button>
           </Link>
         ) : null}
       </section>
@@ -127,4 +148,3 @@ function App() {
 }
 
 export default App;
-

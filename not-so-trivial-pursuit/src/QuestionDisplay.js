@@ -1,5 +1,7 @@
 import "./styles.scss";
 import { useState, useEffect } from "react";
+import LukeSkywalker from "./images/lukeSkywalker.png";
+import DarthMaul from "./images/darthMaul.png";
 
 function QuestionDisplay(props) {
   const {
@@ -19,6 +21,7 @@ function QuestionDisplay(props) {
     const rightAnswer = currentQuestion.correct_answer;
     const wrongAnswers = currentQuestion.incorrect_answers;
     console.log(rightAnswer);
+    console.log(wrongAnswers);
     if (wrongAnswers !== undefined) {
       const answers = [...wrongAnswers, rightAnswer];
 
@@ -31,18 +34,29 @@ function QuestionDisplay(props) {
   const booleanTrueClick = () => {
     if (currentQuestion.correct_answer === "True") {
       setAnswerCorrect(answeredCorrect + 1);
+      alert("You got it!");
+    } else {
+      alert("You did not get it!");
     }
   };
 
   const booleanFalseClick = () => {
     if (currentQuestion.correct_answer === "False") {
       setAnswerCorrect(answeredCorrect + 1);
+      alert("You got it!");
+    } else {
+      alert("You did not get it!");
     }
   };
   //For multiple choice
   const multipleClick = (e) => {
+    console.log(e.target.value);
+    console.log(currentQuestion.correct_answer);
     if (e.target.value === currentQuestion.correct_answer) {
       setAnswerCorrect(answeredCorrect + 1);
+      alert("You got it!");
+    } else {
+      alert("You did not get it!");
     }
   };
 
@@ -53,31 +67,44 @@ function QuestionDisplay(props) {
 
   return (
     <>
-      {currentQuestion.type === "multiple" ? (
-        <div>
-          {/*get rid of ugly text*/}
-          <div
-            dangerouslySetInnerHTML={{ __html: currentQuestion.question }}
-          ></div>
-          {randomAnswers.map((answer, index) => (
+      <div className="animationContainer">
+        <img
+          className="darthMaul"
+          src={DarthMaul}
+          alt="DarthMaul is ready to fight!"
+        />
+        <img
+          className="lukeSkywalker "
+          src={LukeSkywalker}
+          alt="Luke Skywalker is ready to fight!"
+        />
+      </div>
+      <div className="questionContainer">
+        {/*get rid of ugly text*/}
+        <div
+          className="questionText"
+          dangerouslySetInnerHTML={{ __html: currentQuestion.question }}
+        ></div>
+        {currentQuestion.type === "multiple" ? (
+          <>
+            {randomAnswers.map((answer, index) => (
+              <button
+                className="buttonAnswer"
+                value={answer}
+                key={index}
+                onClick={(e) => {
+                  multipleClick(e);
+                  ClickAnAnswerAndGoToNextQuestion();
+                }}
+                dangerouslySetInnerHTML={{ __html: answer }}
+              ></button>
+            ))}
+          </>
+        ) : null}
+        {currentQuestion.type === "boolean" ? (
+          <>
             <button
-              value={answer}
-              key={index}
-              onClick={(e) => {
-                multipleClick(e);
-                ClickAnAnswerAndGoToNextQuestion();
-              }}
-            >
-              {answer}
-            </button>
-          ))}
-        </div>
-      ) : null}
-      {currentQuestion.type === "boolean" ? (
-        <div>
-          <p>{currentQuestion.question}</p>
-          <div>
-            <button
+              className="buttonAnswer"
               onClick={() => {
                 booleanTrueClick();
                 ClickAnAnswerAndGoToNextQuestion();
@@ -86,6 +113,7 @@ function QuestionDisplay(props) {
               True
             </button>
             <button
+              className="buttonAnswer"
               onClick={() => {
                 booleanFalseClick();
                 ClickAnAnswerAndGoToNextQuestion();
@@ -93,9 +121,9 @@ function QuestionDisplay(props) {
             >
               False
             </button>
-          </div>
-        </div>
-      ) : null}
+          </>
+        ) : null}
+      </div>
     </>
   );
 }

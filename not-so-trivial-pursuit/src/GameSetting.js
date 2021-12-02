@@ -165,23 +165,25 @@ function GameSetting(props) {
     <>
       <section>
         {!userNameAlready ? (
-          <form onSubmit={formSubmission}>
+          <form className="userNameInputForm" onSubmit={formSubmission}>
             <label htmlFor="userNameInput">
               Please enter your user name here:
             </label>
-            <input id="userNameInput" type="text" onChange={UserNameInput} />
-            <button onClick={UserNameSubmission}>Submit!</button>
+            <div>
+              <input id="userNameInput" type="text" onChange={UserNameInput} />
+              <button onClick={UserNameSubmission}>Submit!</button>
+            </div>
           </form>
         ) : null}
         {questionsAndAnswersFromApi ? null : questionSettingAlready ? null : userNameAlready &&
           existingUser ? (
-          <div>
+          <div className="continueOrNewGame">
             <button onClick={ContinueGameClick}>Continue your game?</button>
             <button onClick={ExistingUserClick}>Start a new game!</button>
           </div>
         ) : null}
         {questionSettingAlready ? null : !existingUser && userNameAlready ? (
-          <div className="formOne">
+          <div className="dropdownSettingSection">
             <form onSubmit={formSubmission}>
               {/* # of questions selected */}
               <select
@@ -245,10 +247,10 @@ function GameSetting(props) {
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>
               </select>
-              <button onClick={QuestionSettingSubmission}>
+            </form>
+            <button onClick={QuestionSettingSubmission}>
                 Questions Generating!
               </button>
-            </form>
           </div>
         ) : null}
       </section>

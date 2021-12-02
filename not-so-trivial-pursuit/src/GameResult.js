@@ -33,8 +33,8 @@ function GameResult(props) {
     console.log(wrongAnswers);
   }, [answeredCorrect, currentQuestionOrder, setGameResultShows]);
   return (
-    <div>
-      <p>{userName}</p>
+    <div className="resultSection">
+      <p className="resultUserName">{userName}</p>
       {gameResultShows === 0 ? (
         <>
           <p>You are ready to go!</p>
@@ -42,7 +42,9 @@ function GameResult(props) {
       ) : gameResultShows === 1 ? (
         <>
           <p>You win!</p>
-          <p>Your score is: {currentScore}</p>
+          <p>
+            Your score is: <span>{currentScore}</span>
+          </p>
         </>
       ) : gameResultShows === 2 ? (
         <>
