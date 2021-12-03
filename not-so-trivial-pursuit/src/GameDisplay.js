@@ -18,10 +18,7 @@ function GameDisplay(props) {
     setUserNumberChoice
   } = props;
 
-  //made changes from "" to {}, added currentQuestionIndex and totalQuestions
   const [currentQuestion, SetCurrentQuestion] = useState({});
-  //const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  // const [totalQuestions, setTotalQuestions] = useState(0);
 
   useEffect(() => {
     if (continueGame) {
@@ -63,7 +60,6 @@ function GameDisplay(props) {
   return (
     <div className="gameDisplay">
       <>
-        {/*<h1>DisplayPage</h1>*/}
         {/* show Question Display if the current question is less than
         the amount of user questions otherwise, show GameResult */}
         {currentQuestionOrder < userQuestions.length ? (

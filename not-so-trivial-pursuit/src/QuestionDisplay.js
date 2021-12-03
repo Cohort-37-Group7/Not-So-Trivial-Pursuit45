@@ -2,6 +2,8 @@ import "./styles.scss";
 import { useState, useEffect } from "react";
 import LukeSkywalker from "./images/lukeSkywalker.png";
 import DarthMaul from "./images/darthMaul.png";
+import useSound from "use-sound";
+import LightSaberAttackSound from "./audio/lightSaberAttack.mp3";
 
 function QuestionDisplay(props) {
   const {
@@ -13,6 +15,7 @@ function QuestionDisplay(props) {
   } = props;
 
   const [randomAnswers, setRandomAnswers] = useState([]);
+  const [whoWon, setWhoWon] = useState("");
 
   useEffect(() => {
     console.log("AC2 Current Question");
@@ -24,7 +27,6 @@ function QuestionDisplay(props) {
     console.log(wrongAnswers);
     if (wrongAnswers !== undefined) {
       const answers = [...wrongAnswers, rightAnswer];
-
       // const shuffleAnswers = shuffle(answers);
       const shuffleAnswers = answers.sort();
       setRandomAnswers(shuffleAnswers);
@@ -35,18 +37,28 @@ function QuestionDisplay(props) {
     if (currentQuestion.correct_answer === "True") {
       setAnswerCorrect(answeredCorrect + 1);
       alert("You got it!");
+      setWhoWon("luke");
     } else {
       alert("You did not get it!");
+      setWhoWon("maul");
     }
+    setTimeout(function () {
+      setWhoWon("");
+    }, 2001);
   };
 
   const booleanFalseClick = () => {
     if (currentQuestion.correct_answer === "False") {
       setAnswerCorrect(answeredCorrect + 1);
       alert("You got it!");
+      setWhoWon("luke");
     } else {
       alert("You did not get it!");
+      setWhoWon("maul");
     }
+    setTimeout(function () {
+      setWhoWon("");
+    }, 2001);
   };
   //For multiple choice
   const multipleClick = (e) => {
@@ -55,9 +67,14 @@ function QuestionDisplay(props) {
     if (e.target.value === currentQuestion.correct_answer) {
       setAnswerCorrect(answeredCorrect + 1);
       alert("You got it!");
+      setWhoWon("luke");
     } else {
       alert("You did not get it!");
+      setWhoWon("maul");
     }
+    setTimeout(function () {
+      setWhoWon("");
+    }, 2001);
   };
 
   // set to stop at question 11
@@ -65,16 +82,38 @@ function QuestionDisplay(props) {
     setCurrentQuestionOrder(currentQuestionOrder + 1);
   };
 
+  const [playLightSaberAttackSound] = useSound(LightSaberAttackSound, {
+    volume: 0.25
+  });
+
+  useEffect(() => {
+    if (whoWon === "maul" || whoWon === "luke") {
+      playLightSaberAttackSound();
+    }
+  }, [whoWon, playLightSaberAttackSound]);
+
   return (
     <>
       <div className="animationContainer">
         <img
-          className="darthMaul"
+          className={
+            whoWon === "luke"
+              ? "darthMaul lukeWondarthMaul"
+              : whoWon === "maul"
+              ? "darthMaul maulWondarthMaul"
+              : "darthMaul"
+          }
           src={DarthMaul}
           alt="DarthMaul is ready to fight!"
         />
         <img
-          className="lukeSkywalker "
+          className={
+            whoWon === "luke"
+              ? "lukeSkywalker lukeWondarthLuke"
+              : whoWon === "maul"
+              ? "lukeSkywalker maulWondarthLuke"
+              : "lukeSkywalker"
+          }
           src={LukeSkywalker}
           alt="Luke Skywalker is ready to fight!"
         />

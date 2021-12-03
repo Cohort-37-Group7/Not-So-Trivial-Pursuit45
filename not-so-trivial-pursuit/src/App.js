@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import GameDisplay from "./GameDisplay";
 import GameResult from "./GameResult";
 import LogoImage from "./images/logo.png";
+import Footer from "./Footer";
 
 function App() {
   const [gameStart, setGameStart] = useState(false);
@@ -20,6 +21,7 @@ function App() {
   const [userNumberChoice, setUserNumberChoice] = useState("placeholder"); //Pass to GameSetting and GameDisplay
   const [openGameResultWindow, setOpenGameResultWindow] = useState(false);
   const [gameResultShows, setGameResultShows] = useState(0);
+  // const [stopMusicDisplay, setStopMusicDisplay] = useState(true);
 
   useEffect(() => {
     const numberUserNumberChoice = parseInt(userNumberChoice, 10);
@@ -51,10 +53,11 @@ function App() {
   const GameResultClick = () => {
     setOpenGameResultWindow(!openGameResultWindow);
   };
+
   return (
     <Router>
       <section className="App">
-        <nav>
+        <nav className={gameStart ? "movingNav" : null}>
           <div>
             <Link to="/">
               <button className="homePageButton" onClick={HomePageClick}>
@@ -90,18 +93,24 @@ function App() {
             </button>
           </Link>
         ) : null}
+        <Footer />
+
+        {openGameResultWindow ? (
+          <GameResult
+            currentQuestionOrder={currentQuestionOrder}
+            answeredCorrect={answeredCorrect}
+            userName={userName}
+            gameResultShows={gameResultShows}
+            setGameResultShows={setGameResultShows}
+            setAnswerCorrect={setAnswerCorrect}
+            setCurrentQuestionOrder={setCurrentQuestionOrder}
+            setGameStart={setGameStart}
+            setQuestionSettingAlready={setQuestionSettingAlready}
+            setGameDisplayStart={setGameDisplayStart}
+            setOpenGameResultWindow={setOpenGameResultWindow}
+          />
+        ) : null}
       </section>
-
-      {openGameResultWindow ? (
-        <GameResult
-          currentQuestionOrder={currentQuestionOrder}
-          answeredCorrect={answeredCorrect}
-          userName={userName}
-          gameResultShows={gameResultShows}
-          setGameResultShows={setGameResultShows}
-        />
-      ) : null}
-
       <Routes>
         <Route
           path="/gamesetting/*"
@@ -110,7 +119,6 @@ function App() {
               userName={userName}
               SetUserName={SetUserName}
               questionSettingAlready={questionSettingAlready}
-              setQuestionSettingAlready={setQuestionSettingAlready}
               userQuestions={userQuestions}
               setUserQuestions={setUserQuestions}
               setUserCorrectNumber={setUserCorrectNumber}
@@ -119,6 +127,13 @@ function App() {
               setContinueGame={setContinueGame}
               userNumberChoice={userNumberChoice}
               setUserNumberChoice={setUserNumberChoice}
+              setGameResultShows={setGameResultShows}
+              setAnswerCorrect={setAnswerCorrect}
+              setCurrentQuestionOrder={setCurrentQuestionOrder}
+              setGameStart={setGameStart}
+              setQuestionSettingAlready={setQuestionSettingAlready}
+              setGameDisplayStart={setGameDisplayStart}
+              setOpenGameResultWindow={setOpenGameResultWindow}
             />
           }
         />

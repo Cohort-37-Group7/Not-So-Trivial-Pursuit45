@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./styles.scss";
+import { Link } from "react-router-dom";
 
 function GameResult(props) {
   const {
@@ -7,9 +8,25 @@ function GameResult(props) {
     answeredCorrect,
     userName,
     gameResultShows,
-    setGameResultShows
+    setGameResultShows,
+    setAnswerCorrect,
+    setCurrentQuestionOrder,
+    setGameStart,
+    setQuestionSettingAlready,
+    setGameDisplayStart,
+    setOpenGameResultWindow
   } = props;
   const [currentScore, setCurrentScore] = useState(0);
+
+  const QuitClick = () => {
+    setGameResultShows(0);
+    setAnswerCorrect(0);
+    setCurrentQuestionOrder(0);
+    setGameStart(false);
+    setQuestionSettingAlready(false);
+    setGameDisplayStart(false);
+    setOpenGameResultWindow(false);
+  };
 
   useEffect(() => {
     if (currentQuestionOrder > 0) {
@@ -49,7 +66,7 @@ function GameResult(props) {
       ) : gameResultShows === 2 ? (
         <>
           <p>You lose!</p>
-          <p>Your score is: {currentScore}%</p>
+          <p>Your score is: {currentScore}</p>
         </>
       ) : gameResultShows === 3 ? (
         <>
@@ -60,6 +77,11 @@ function GameResult(props) {
           <p>You are ready to go!</p>
         </>
       )}
+      <Link to="/">
+        <button className="quitButton" onClick={QuitClick}>
+          Quit The Game
+        </button>
+      </Link>
     </div>
   );
 }

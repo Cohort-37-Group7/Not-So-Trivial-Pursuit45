@@ -15,7 +15,12 @@ function GameSetting(props) {
     continueGame,
     setContinueGame,
     userNumberChoice,
-    setUserNumberChoice
+    setUserNumberChoice,
+    setGameResultShows,
+    setAnswerCorrect,
+    setCurrentQuestionOrder,
+    setGameDisplayStart,
+    setOpenGameResultWindow
   } = props;
 
   const [userNameAlready, setUserNameAlready] = useState(false);
@@ -137,6 +142,19 @@ function GameSetting(props) {
         method: "GET",
         responseType: "json"
       }).then((response) => {
+        const numberUserNumberChoice = parseInt(userNumberChoice, 10);
+        if (response.data.results.length !== numberUserNumberChoice) {
+          alert("Meet your requirements I cannot. Return home young Jedi.");
+          setGameResultShows(0);
+          setAnswerCorrect(0);
+          setCurrentQuestionOrder(0);
+          setQuestionSettingAlready(false);
+          setGameDisplayStart(false);
+          setOpenGameResultWindow(false);
+          setExistingUser(false);
+          setUserNameAlready(true);
+        }
+
         if (questionsAndAnswersFromApi === "") {
           setQuestionsAndAnswersFromApi(response.data.results);
         }
@@ -158,7 +176,13 @@ function GameSetting(props) {
     userCategoryChoice,
     setQuestionsAndAnswersFromApi,
     existingUser,
-    setUserQuestions
+    setUserQuestions,
+    setGameResultShows,
+    setAnswerCorrect,
+    setCurrentQuestionOrder,
+    setQuestionSettingAlready,
+    setGameDisplayStart,
+    setOpenGameResultWindow
   ]);
 
   return (
@@ -193,7 +217,7 @@ function GameSetting(props) {
                 onChange={handleUserNumberChoice}
               >
                 <option value="placeholder" disabled>
-                  Choose your number of questions:
+                  Question Number:
                 </option>
                 <option value="1">1</option>
                 <option value="3">3</option>
@@ -210,7 +234,7 @@ function GameSetting(props) {
                 onChange={handleUserCategoryChoice}
               >
                 <option value="placeholder" disabled>
-                  Choose your category:
+                  Question Category:
                 </option>
                 <option value="21">Sport</option>
                 <option value="9">General Knowledge</option>
@@ -228,7 +252,7 @@ function GameSetting(props) {
                 onChange={handleUserTypeChoice}
               >
                 <option value="placeholder" disabled>
-                  Choose your type:
+                  Question Type:
                 </option>
                 <option value="multiple">Multiple Choice</option>
                 <option value="boolean">True/False</option>
@@ -241,7 +265,7 @@ function GameSetting(props) {
                 onChange={handleUserDifficultyChoice}
               >
                 <option value="placeholder" disabled>
-                  Select difficulty:
+                  Question Difficulty:
                 </option>
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
@@ -249,8 +273,8 @@ function GameSetting(props) {
               </select>
             </form>
             <button onClick={QuestionSettingSubmission}>
-                Questions Generating!
-              </button>
+              Generate Questions!
+            </button>
           </div>
         ) : null}
       </section>
