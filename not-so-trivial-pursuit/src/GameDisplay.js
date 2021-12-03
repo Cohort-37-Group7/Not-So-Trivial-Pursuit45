@@ -40,7 +40,6 @@ function GameDisplay(props) {
 
   useEffect(() => {
     SetCurrentQuestion(userQuestions[currentQuestionOrder]);
-    console.log(currentQuestion);
   }, [
     userQuestions,
     currentQuestion,

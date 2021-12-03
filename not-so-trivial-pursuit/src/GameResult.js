@@ -46,8 +46,6 @@ function GameResult(props) {
     } else if (wrongAnswers === rightAnswer && currentQuestionOrder !== 0) {
       setGameResultShows(3);
     }
-    console.log(rightAnswer);
-    console.log(wrongAnswers);
   }, [answeredCorrect, currentQuestionOrder, setGameResultShows]);
   return (
     <div className="resultSection">

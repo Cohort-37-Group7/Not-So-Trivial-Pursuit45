@@ -18,13 +18,8 @@ function QuestionDisplay(props) {
   const [whoWon, setWhoWon] = useState("");
 
   useEffect(() => {
-    console.log("AC2 Current Question");
-    console.log(currentQuestion);
-
     const rightAnswer = currentQuestion.correct_answer;
     const wrongAnswers = currentQuestion.incorrect_answers;
-    console.log(rightAnswer);
-    console.log(wrongAnswers);
     if (wrongAnswers !== undefined) {
       const answers = [...wrongAnswers, rightAnswer];
       // const shuffleAnswers = shuffle(answers);
@@ -62,8 +57,6 @@ function QuestionDisplay(props) {
   };
   //For multiple choice
   const multipleClick = (e) => {
-    console.log(e.target.value);
-    console.log(currentQuestion.correct_answer);
     if (e.target.value === currentQuestion.correct_answer) {
       setAnswerCorrect(answeredCorrect + 1);
       alert("You got it!");

@@ -28,8 +28,6 @@ function App() {
     if (currentQuestionOrder === numberUserNumberChoice) {
       setOpenGameResultWindow(true);
     }
-    console.log("userAnsweredNumber" + currentQuestionOrder);
-    console.log("userNumberChoice" + userNumberChoice);
   }, [currentQuestionOrder, userNumberChoice, setOpenGameResultWindow]);
 
   const GameStartClick = () => {
